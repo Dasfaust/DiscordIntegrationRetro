@@ -6,9 +6,11 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import net.minecraftforge.common.MinecraftForge;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
 import cpw.mods.fml.common.event.FMLServerStartedEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.event.FMLServerStoppedEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import de.erdbeerbaerlp.dcintegration.common.DiscordIntegration;
 import de.erdbeerbaerlp.dcintegration.common.storage.Configuration;
@@ -18,12 +20,10 @@ public class CommonProxy {
 
     public EventListener listener = new EventListener();
 
-    // preInit "Run before anything else. Read your config, create blocks, items, etc, and register them with the
-    // GameRegistry." (Remove if not needed)
     public void preInit(FMLPreInitializationEvent event) {
         Config.synchronizeConfiguration(event.getSuggestedConfigurationFile());
 
-        DiscordIntegrationMod.LOG.info("DiscordIntegration version " + DiscordIntegrationMod.VERSION);
+        DiscordIntegrationMod.LOG.info("DiscordIntegration version " + Tags.VERSION);
 
         try {
             if (!DiscordIntegration.discordDataDir.exists()) {
@@ -40,6 +40,9 @@ public class CommonProxy {
                 DiscordIntegrationMod.LOG.error("Please check the config file and set a bot token!");
             } else {
                 MinecraftForge.EVENT_BUS.register(listener);
+                FMLCommonHandler.instance()
+                    .bus()
+                    .register(listener);
             }
         } catch (IOException | IllegalStateException e) {
             DiscordIntegrationMod.LOG.error("An error occurred while reading the config file:");
@@ -48,8 +51,7 @@ public class CommonProxy {
         }
     }
 
-    // register server commands in this event handler (Remove if not needed)
-    public void serverStarting(FMLServerAboutToStartEvent event) {
+    public void serverStarting(FMLServerStartingEvent event) {
         DiscordIntegration.INSTANCE = new DiscordIntegration(new ForgeServerInterface());
 
         try {
@@ -66,7 +68,7 @@ public class CommonProxy {
             if (DiscordIntegration.INSTANCE.getJDA() != null) {
                 Thread.sleep(2000);
 
-                if (!Localization.instance().serverStarting.isEmpty())
+                if (!Localization.instance().serverStarting.isEmpty()) {
                     if (DiscordIntegration.INSTANCE.getChannel() != null) {
                         final MessageCreateData m;
 
@@ -87,6 +89,7 @@ public class CommonProxy {
                             m,
                             DiscordIntegration.INSTANCE.getChannel(Configuration.instance().advanced.serverChannelID));
                     }
+                }
             }
         } catch (InterruptedException | NullPointerException ignored) {}
     }
@@ -97,5 +100,9 @@ public class CommonProxy {
 
     public void serverStopping(FMLServerStoppingEvent event) {
         listener.onServerStopping(event);
+    }
+
+    public void serverStopped(FMLServerStoppedEvent event) {
+        listener.onServerStopped(event);
     }
 }
