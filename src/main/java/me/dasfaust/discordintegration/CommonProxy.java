@@ -1,21 +1,22 @@
 package me.dasfaust.discordintegration;
 
-import cpw.mods.fml.common.event.*;
-import cpw.mods.fml.common.eventhandler.EventPriority;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent;
-import de.erdbeerbaerlp.dcintegration.common.DiscordIntegration;
-import de.erdbeerbaerlp.dcintegration.common.storage.Configuration;
-import de.erdbeerbaerlp.dcintegration.common.storage.Localization;
+import java.io.IOException;
+
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import net.minecraftforge.common.MinecraftForge;
 
-import java.io.IOException;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
+import cpw.mods.fml.common.event.FMLServerStartedEvent;
+import cpw.mods.fml.common.event.FMLServerStoppingEvent;
+import de.erdbeerbaerlp.dcintegration.common.DiscordIntegration;
+import de.erdbeerbaerlp.dcintegration.common.storage.Configuration;
+import de.erdbeerbaerlp.dcintegration.common.storage.Localization;
 
 public class CommonProxy {
 
-    final EventListener listener = new EventListener();
+    public EventListener listener = new EventListener();
 
     // preInit "Run before anything else. Read your config, create blocks, items, etc, and register them with the
     // GameRegistry." (Remove if not needed)
@@ -27,7 +28,9 @@ public class CommonProxy {
         try {
             if (!DiscordIntegration.discordDataDir.exists()) {
                 if (!DiscordIntegration.discordDataDir.mkdir()) {
-                    DiscordIntegrationMod.LOG.error("Please create the folder '" + DiscordIntegration.discordDataDir.getAbsolutePath() + "' manually");
+                    DiscordIntegrationMod.LOG.error(
+                        "Please create the folder '" + DiscordIntegration.discordDataDir.getAbsolutePath()
+                            + "' manually");
                 }
             }
 
@@ -45,18 +48,12 @@ public class CommonProxy {
         }
     }
 
-    // load "Do your mod setup. Build whatever data structures you care about. Register recipes." (Remove if not needed)
-    public void init(FMLInitializationEvent event) {}
-
-    // postInit "Handle interaction with other mods, complete your setup based on this." (Remove if not needed)
-    public void postInit(FMLPostInitializationEvent event) {}
-
     // register server commands in this event handler (Remove if not needed)
     public void serverStarting(FMLServerAboutToStartEvent event) {
         DiscordIntegration.INSTANCE = new DiscordIntegration(new ForgeServerInterface());
 
         try {
-            //Wait a short time to allow JDA to get initialized
+            // Wait a short time to allow JDA to get initialized
             DiscordIntegrationMod.LOG.info("Waiting for JDA to initialize...");
             for (int i = 0; i <= 5; i++) {
                 if (DiscordIntegration.INSTANCE.getJDA() == null) {
@@ -69,21 +66,36 @@ public class CommonProxy {
             if (DiscordIntegration.INSTANCE.getJDA() != null) {
                 Thread.sleep(2000);
 
-                if (!Localization.instance().serverStarting.isBlank())
+                if (!Localization.instance().serverStarting.isEmpty())
                     if (DiscordIntegration.INSTANCE.getChannel() != null) {
                         final MessageCreateData m;
 
-                        if (Configuration.instance().embedMode.enabled && Configuration.instance().embedMode.startMessages.asEmbed)
-                        {
-                            m = new MessageCreateBuilder().setEmbeds(Configuration.instance().embedMode.startMessages.toEmbed().setDescription(Localization.instance().serverStarting).build()).build();
+                        if (Configuration.instance().embedMode.enabled
+                            && Configuration.instance().embedMode.startMessages.asEmbed) {
+                            m = new MessageCreateBuilder()
+                                .setEmbeds(
+                                    Configuration.instance().embedMode.startMessages.toEmbed()
+                                        .setDescription(Localization.instance().serverStarting)
+                                        .build())
+                                .build();
                         } else {
-                            m = new MessageCreateBuilder().addContent(Localization.instance().serverStarting).build();
+                            m = new MessageCreateBuilder().addContent(Localization.instance().serverStarting)
+                                .build();
                         }
 
-                        DiscordIntegration.startingMsg = DiscordIntegration.INSTANCE.sendMessageReturns(m, DiscordIntegration.INSTANCE.getChannel(Configuration.instance().advanced.serverChannelID));
+                        DiscordIntegration.startingMsg = DiscordIntegration.INSTANCE.sendMessageReturns(
+                            m,
+                            DiscordIntegration.INSTANCE.getChannel(Configuration.instance().advanced.serverChannelID));
                     }
             }
-        } catch (InterruptedException | NullPointerException ignored) {
-        }
+        } catch (InterruptedException | NullPointerException ignored) {}
+    }
+
+    public void serverStarted(FMLServerStartedEvent event) {
+        listener.onServerStarted(event);
+    }
+
+    public void serverStopping(FMLServerStoppingEvent event) {
+        listener.onServerStopping(event);
     }
 }
