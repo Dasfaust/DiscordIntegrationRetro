@@ -1,4 +1,4 @@
-package me.dasfaust.discordintegration;
+package me.dasfaust.discordintegrationretro;
 
 import java.util.Date;
 import java.util.UUID;
@@ -86,7 +86,7 @@ public class EventListener {
 
     public void onServerStopping(FMLServerStoppingEvent event) {
         if (DiscordIntegration.INSTANCE != null) {
-            DiscordIntegrationMod.LOG.info("Stopping Discord bot...");
+            DiscordIntegrationRetro.LOG.info("Stopping Discord bot...");
             if (!Localization.instance().serverStopped.isEmpty()) {
                 if (Configuration.instance().embedMode.enabled
                     && Configuration.instance().embedMode.stopMessages.asEmbed) {
@@ -113,7 +113,7 @@ public class EventListener {
             DiscordIntegration.INSTANCE.stopThreads();
             DiscordIntegration.INSTANCE.kill(false);
             DiscordIntegration.INSTANCE = null;
-            DiscordIntegrationMod.LOG.info("Bot stopped!");
+            DiscordIntegrationRetro.LOG.info("Bot stopped!");
         }
     }
 
@@ -317,7 +317,7 @@ public class EventListener {
                             UUID.randomUUID()
                                 .toString());
                     if (!Configuration.instance().embedMode.chatMessages.customJSON.isEmpty()) {
-                        DiscordIntegrationMod.LOG.info("Sending custom embed");
+                        DiscordIntegrationRetro.LOG.info("Sending custom embed");
                         final EmbedBuilder b = Configuration.instance().embedMode.chatMessages.toEmbedJson(
                             Configuration.instance().embedMode.chatMessages.customJSON
                                 .replace("%uuid%", playerUuid.toString())

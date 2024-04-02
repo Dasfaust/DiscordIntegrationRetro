@@ -6,7 +6,7 @@
 		"description": "A DiscordIntegration-Forge port for Minecraft 1.7.10",
 		"version": "${modVersion}",
 		"mcversion": "${minecraftVersion}",
-		"url": "https://github.com/Dasfaust/DiscordIntegration",
+		"url": "https://github.com/Dasfaust/DiscordIntegrationRetro",
 		"updateUrl": "",
 		"authorList": ["Dasfaust"],
 		"credits": "",

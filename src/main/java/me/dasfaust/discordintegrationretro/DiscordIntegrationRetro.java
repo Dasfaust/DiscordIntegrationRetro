@@ -1,4 +1,4 @@
-package me.dasfaust.discordintegration;
+package me.dasfaust.discordintegrationretro;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,17 +12,17 @@ import cpw.mods.fml.common.event.FMLServerStoppedEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 
 @Mod(
-    modid = DiscordIntegrationMod.MODID,
+    modid = DiscordIntegrationRetro.MODID,
     version = Tags.VERSION,
-    name = "DiscordIntegration",
+    name = "DiscordIntegrationRetro",
     acceptedMinecraftVersions = "[1.7.10]",
     acceptableRemoteVersions = "*")
-public class DiscordIntegrationMod {
+public class DiscordIntegrationRetro {
 
-    public static final String MODID = "discordintegration";
+    public static final String MODID = "discordintegrationretro";
     public static final Logger LOG = LogManager.getLogger(MODID);
 
-    @SidedProxy(serverSide = "me.dasfaust.discordintegration.CommonProxy")
+    @SidedProxy(serverSide = "me.dasfaust.discordintegrationretro.CommonProxy")
     public static CommonProxy proxy;
 
     @Mod.EventHandler

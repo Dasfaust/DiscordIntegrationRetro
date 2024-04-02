@@ -1,4 +1,4 @@
-package me.dasfaust.discordintegration;
+package me.dasfaust.discordintegrationretro;
 
 import java.io.File;
 

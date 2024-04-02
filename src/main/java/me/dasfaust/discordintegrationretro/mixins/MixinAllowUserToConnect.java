@@ -1,4 +1,4 @@
-package me.dasfaust.discordintegration.mixins;
+package me.dasfaust.discordintegrationretro.mixins;
 
 import java.net.SocketAddress;
 
@@ -16,14 +16,14 @@ import de.erdbeerbaerlp.dcintegration.common.DiscordIntegration;
 import de.erdbeerbaerlp.dcintegration.common.storage.Configuration;
 import de.erdbeerbaerlp.dcintegration.common.storage.Localization;
 import de.erdbeerbaerlp.dcintegration.common.storage.linking.LinkManager;
-import me.dasfaust.discordintegration.DiscordIntegrationMod;
+import me.dasfaust.discordintegrationretro.DiscordIntegrationRetro;
 
 @Mixin(ServerConfigurationManager.class)
 public class MixinAllowUserToConnect {
 
     @Inject(method = "allowUserToConnect", at = @At("HEAD"), cancellable = true)
     public void allowUserToConnect(SocketAddress address, GameProfile profile, CallbackInfoReturnable<String> cir) {
-        DiscordIntegrationMod.LOG.info(profile.getName() + " is attempting to connect");
+        DiscordIntegrationRetro.LOG.info(profile.getName() + " is attempting to connect");
 
         if (Configuration.instance().linking.whitelistMode && MinecraftServer.getServer()
             .isServerInOnlineMode()) {

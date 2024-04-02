@@ -1,4 +1,4 @@
-package me.dasfaust.discordintegration;
+package me.dasfaust.discordintegrationretro;
 
 import java.io.IOException;
 
@@ -23,12 +23,12 @@ public class CommonProxy {
     public void preInit(FMLPreInitializationEvent event) {
         Config.synchronizeConfiguration(event.getSuggestedConfigurationFile());
 
-        DiscordIntegrationMod.LOG.info("DiscordIntegration version " + Tags.VERSION);
+        DiscordIntegrationRetro.LOG.info("DiscordIntegration version " + Tags.VERSION);
 
         try {
             if (!DiscordIntegration.discordDataDir.exists()) {
                 if (!DiscordIntegration.discordDataDir.mkdir()) {
-                    DiscordIntegrationMod.LOG.error(
+                    DiscordIntegrationRetro.LOG.error(
                         "Please create the folder '" + DiscordIntegration.discordDataDir.getAbsolutePath()
                             + "' manually");
                 }
@@ -37,7 +37,7 @@ public class CommonProxy {
             DiscordIntegration.loadConfigs();
 
             if (Configuration.instance().general.botToken.equals("INSERT BOT TOKEN HERE")) {
-                DiscordIntegrationMod.LOG.error("Please check the config file and set a bot token!");
+                DiscordIntegrationRetro.LOG.error("Please check the config file and set a bot token!");
             } else {
                 MinecraftForge.EVENT_BUS.register(listener);
                 FMLCommonHandler.instance()
@@ -45,9 +45,9 @@ public class CommonProxy {
                     .register(listener);
             }
         } catch (IOException | IllegalStateException e) {
-            DiscordIntegrationMod.LOG.error("An error occurred while reading the config file:");
-            DiscordIntegrationMod.LOG.error(e.getMessage());
-            DiscordIntegrationMod.LOG.error(e.getCause());
+            DiscordIntegrationRetro.LOG.error("An error occurred while reading the config file:");
+            DiscordIntegrationRetro.LOG.error(e.getMessage());
+            DiscordIntegrationRetro.LOG.error(e.getCause());
         }
     }
 
@@ -56,7 +56,7 @@ public class CommonProxy {
 
         try {
             // Wait a short time to allow JDA to get initialized
-            DiscordIntegrationMod.LOG.info("Waiting for JDA to initialize...");
+            DiscordIntegrationRetro.LOG.info("Waiting for JDA to initialize...");
             for (int i = 0; i <= 5; i++) {
                 if (DiscordIntegration.INSTANCE.getJDA() == null) {
                     Thread.sleep(1000);
